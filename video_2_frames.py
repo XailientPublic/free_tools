@@ -1,4 +1,4 @@
-
+from tqdm import tqdm
 import cv2 as cv
 import argparse
 from pathlib import Path
@@ -47,11 +47,10 @@ python3 video_2_frames --every <integer> <path_to_video>
 
 # Video Processing
 cap = cv.VideoCapture(str(video_path))
+vid_len = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
 
-i = 0
-while True:
-
-    i += 1
+count = 0
+for i in tqdm(range(vid_len)):
 
     ret_val, next_frame = cap.read() # Reads the next video frame into memory
 
@@ -60,8 +59,9 @@ while True:
 
     if every_ith_frame is not 'None':
         if i % every_ith_frame is 0:
-            image_name = 'frame_' + str(i) + '.jpg'
+            image_name = 'frame_' + str(count) + '.jpg'
             cv.imwrite(str(output_path / image_name), next_frame)
+            count += 1
         continue
 
     cv.imshow('frame'+str(i),next_frame)
@@ -70,8 +70,9 @@ while True:
     if key == 113: # Hit q key to exit
         break
     elif key == 115: # Hit s key to save
-        image_name = 'frame_' + str(i) + '.jpg'
+        image_name = 'frame_' + str(count) + '.jpg'
         cv.imwrite(str(output_path / image_name), next_frame)
+        count += 1
     else:
         pass
 
