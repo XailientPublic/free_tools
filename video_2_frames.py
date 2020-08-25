@@ -9,6 +9,8 @@ parser.add_argument('path_to_video', type=str, nargs=1,
                     help='Path to the video you want to split')
 parser.add_argument('--every', type=int, nargs=1,
                     help='Save every ith frame')
+parser.add_argument('--output_path', type=str, nargs=1,
+                    help='output path for the directory with frames')        
 
 args = parser.parse_args()
 video_path = Path(args.path_to_video[0])
@@ -25,7 +27,11 @@ else:
     every_ith_frame = 'None'
 
 # Setup
-output_path = Path.cwd()
+if args.output_path:
+    output_path = Path(args.output_path[0])
+else:
+    output_path = Path.cwd()
+
 output_path = output_path / video_name
 try:
     output_path.mkdir()
@@ -35,7 +41,7 @@ except FileExistsError:
 print('Created a new directory called ' + str(video_name) + ' in the current directory')
 
 # Instructions
-if every_ith_frame is 'None':
+if every_ith_frame == 'None':
     print('''You are manually choosing the frames to save.
     Press q to exit
     Press s to save a frame
@@ -54,11 +60,11 @@ for i in tqdm(range(vid_len)):
 
     ret_val, next_frame = cap.read() # Reads the next video frame into memory
 
-    if ret_val is False:
+    if ret_val == False:
         break
 
-    if every_ith_frame is not 'None':
-        if i % every_ith_frame is 0:
+    if every_ith_frame != 'None':
+        if i % every_ith_frame == 0:
             image_name = 'frame_' + str(count) + '.jpg'
             cv.imwrite(str(output_path / image_name), next_frame)
             count += 1
